@@ -7,7 +7,7 @@ Heavily relies on the `OpenBabel` library for reading the `xyz` file.
 ## Compile and Run
 
 ```bash
-gcc -o builds/molec.exe src/main.c src/glad.c -I include -L lib -lglfw3 -lopengl32 -lgdi32
+gcc -o builds/molec.exe src/main.c src/glad.c -I include -L C:/GLFW/lib-mingw-w64 -lglfw3 -lopengl32 -lgdi32
 ```
 
 ```bash

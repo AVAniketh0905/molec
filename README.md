@@ -6,8 +6,16 @@ Heavily relies on the `OpenBabel` library for reading the `xyz` file.
 
 ## Compile and Run
 
+### Windows
+
 ```bash
-gcc -o builds/molec.exe src/main.c src/glad.c -I include -L C:/GLFW/lib-mingw-w64 -lglfw3 -lopengl32 -lgdi32
+gcc -o builds/molec.exe (Get-ChildItem -Path src -Filter *.c | ForEach-Object { $_.FullName }) -I include -I include/freetype2 -L lib -lglfw3 -lopengl32 -lgdi32 -lfreetype
+```
+
+### Linux
+
+```bash
+gcc -o builds/molec src/*.c -I include -L /usr/lib -lglfw -lGL -lm
 ```
 
 ```bash

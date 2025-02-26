@@ -8,16 +8,21 @@
       "args": [
         "-Wall",
         "-o",
-        "main.exe",
-        "main.c",
-        "glad.c",
+        "builds/mollec.exe",
+        "src/main.c",
+        "src/glad.c",
+        "src/mode.c",
+        "src/ui.c",
         "-I",
-        "C:/GLFW/include",
+        "include",
         "-L",
         "C:/GLFW/lib-mingw-w64",
+        "-L",
+        "lib",
         "-lglfw3",
         "-lopengl32",
-        "-lgdi32"
+        "-lgdi32",
+        "-lfreetype"
       ],
       "group": {
         "kind": "build",

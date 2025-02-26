@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    "*.js": "javascriptreact",
+    "*.tsx": "typescriptreact",
+    "mode.h": "c",
+    "ui.h": "c"
+  }
+}

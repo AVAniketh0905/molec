@@ -15,7 +15,7 @@ gcc -o builds/molec.exe (Get-ChildItem -Path src -Filter *.c | ForEach-Object { 
 ### Linux
 
 ```bash
-gcc -o builds/molec src/*.c -I include -L /usr/lib -lglfw -lGL -lm
+gcc -o builds/molec src/*.c -I include -I include/freetype2 -L /usr/lib -lglfw -lGL -lm
 ```
 
 ```bash

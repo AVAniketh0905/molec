@@ -6,7 +6,8 @@
                 "${workspaceFolder}/**",
                 "C:/GLFW/include",
                 "C:/msys64/ucrt64/include",
-                "${workspaceFolder}/include/freetype2"
+                "${workspaceFolder}/include/freetype2",
+                "${workspaceFolder}/include"
             ],
             "defines": [
                 "_DEBUG",

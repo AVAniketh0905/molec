@@ -3,8 +3,8 @@
 #include <freetype2/ft2build.h>
 #include FT_FREETYPE_H
 
-int main(){
+int main()
+{
     printf("Hello, World!\n");
     return 0;
 };
-

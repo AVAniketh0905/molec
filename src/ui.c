@@ -8,24 +8,28 @@
 
 #define MAX_CHARAS 128
 
-typedef struct {
-    GLuint textureID;  // OpenGL texture ID
-    int width, height; // Bitmap size
+typedef struct
+{
+    GLuint textureID;       // OpenGL texture ID
+    int width, height;      // Bitmap size
     int bearingX, bearingY; // Offset from baseline
-    int advance; // Horizontal advance
+    int advance;            // Horizontal advance
 } Character;
 
 Character characters[MAX_CHARAS]; // Store ASCII characters
 
-void loadFont(const char* fontPath) {
+void loadFont(const char *fontPath)
+{
     FT_Library ft;
-    if (FT_Init_FreeType(&ft)) {
+    if (FT_Init_FreeType(&ft))
+    {
         printf("Failed to initialize FreeType\n");
         return;
     }
 
     FT_Face face;
-    if (FT_New_Face(ft, fontPath, 0, &face)) {
+    if (FT_New_Face(ft, fontPath, 0, &face))
+    {
         printf("Failed to load font: %s\n", fontPath);
         return;
     }
@@ -34,8 +38,10 @@ void loadFont(const char* fontPath) {
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte alignment restriction
 
-    for (unsigned char c = 0; c < 128; c++) {
-        if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
+    for (unsigned char c = 0; c < 128; c++)
+    {
+        if (FT_Load_Char(face, c, FT_LOAD_RENDER))
+        {
             printf("Failed to load glyph: %c\n", c);
             continue;
         }
@@ -64,11 +70,13 @@ void loadFont(const char* fontPath) {
     FT_Done_FreeType(ft);
 }
 
-void renderTextPlaceholder(float x, float y, const char* text) {
+void renderTextPlaceholder(float x, float y, const char *text)
+{
     printf("Render text at (%.2f, %.2f): %s\n", x, y, text);
 }
 
-void drawRectangle(float x, float y, float width, float height) {
+void drawRectangle(float x, float y, float width, float height)
+{
     glBegin(GL_QUADS);
     glVertex2f(x, y);
     glVertex2f(x + width, y);
@@ -77,7 +85,8 @@ void drawRectangle(float x, float y, float width, float height) {
     glEnd();
 }
 
-void renderText(float x, float y, const char* text) {
+void renderText(float x, float y, const char *text)
+{
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -87,7 +96,8 @@ void renderText(float x, float y, const char* text) {
     glPushMatrix();
     glLoadIdentity();
 
-    for (const char* c = text; *c; c++) {
+    for (const char *c = text; *c; c++)
+    {
         Character ch = characters[(unsigned char)*c];
 
         float xpos = x + ch.bearingX * 0.002f; // Scale to OpenGL coordinates
@@ -98,10 +108,14 @@ void renderText(float x, float y, const char* text) {
         glBindTexture(GL_TEXTURE_2D, ch.textureID);
 
         glBegin(GL_QUADS);
-        glTexCoord2f(0.0f, 1.0f); glVertex2f(xpos, ypos);
-        glTexCoord2f(1.0f, 1.0f); glVertex2f(xpos + w, ypos);
-        glTexCoord2f(1.0f, 0.0f); glVertex2f(xpos + w, ypos + h);
-        glTexCoord2f(0.0f, 0.0f); glVertex2f(xpos, ypos + h);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex2f(xpos, ypos);
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex2f(xpos + w, ypos);
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex2f(xpos + w, ypos + h);
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex2f(xpos, ypos + h);
         glEnd();
 
         x += (ch.advance * 0.002f); // Move forward
@@ -111,12 +125,14 @@ void renderText(float x, float y, const char* text) {
     glDisable(GL_TEXTURE_2D);
 }
 
-void renderModeOverlay() {
+void renderModeOverlay()
+{
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    if (currentMode == MODE_INSERT) {
-        glColor4f(0.5f, 0.5f, 0.5f, 0.6f);  // Grey with 60% opacity
+    if (currentMode == MODE_INSERT)
+    {
+        glColor4f(0.5f, 0.5f, 0.5f, 0.6f); // Grey with 60% opacity
         drawRectangle(-1.0f, -0.8f, 2.0f, 0.2f);
 
         // DEBUG:
@@ -127,7 +143,8 @@ void renderModeOverlay() {
 
         // Blinking cursor
         float cursorX = textStartX;
-        for (int i = 0; i < cursorPosition; i++) {
+        for (int i = 0; i < cursorPosition; i++)
+        {
             cursorX += characters[(unsigned char)inputBuffer[i]].advance * 0.002f;
         }
         renderText(cursorX, textStartY, "|");

@@ -56,6 +56,7 @@ int main()
     };
 
     glfwMakeContextCurrent(window);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -63,37 +64,24 @@ int main()
         return -1;
     }
 
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-    float vertices[9] = {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.0f};
-
-    unsigned int VBO;
-    glGenBuffers(1, &VBO);
-
-    unsigned int VAO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-
+    // Shaders
+    // vertex
     unsigned int vertex_shader;
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    unsigned int fragment_shader;
-    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     glShaderSource(vertex_shader, 1, &vertex_shader_src, NULL);
     glCompileShader(vertex_shader);
     ErrLog(vertex_shader, GL_COMPILE_STATUS, success, infoLog);
 
+    // fragment
+    unsigned int fragment_shader;
+    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+
     glShaderSource(fragment_shader, 1, &fragment_shader_src, NULL);
     glCompileShader(fragment_shader);
     ErrLog(fragment_shader, GL_COMPILE_STATUS, success, infoLog);
 
+    // shader program
     unsigned int gl_shader_prg;
     gl_shader_prg = glCreateProgram();
 
@@ -107,8 +95,29 @@ int main()
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
 
+    // drawing pipeline
+    float vertices[9] = {
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f, 0.5f, 0.0f};
+
+    unsigned int VBO, VAO;
+    glGenBuffers(1, &VBO);
+
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
+
+    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+    glBindVertexArray(0);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -125,6 +134,9 @@ int main()
         glfwSwapBuffers(window);
     }
 
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteProgram(gl_shader_prg);
     glfwTerminate();
     return 0;
 };

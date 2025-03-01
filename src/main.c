@@ -35,6 +35,7 @@ void ErrLog(GLuint program, GLenum pname, int success, char *infoLog)
     if (!success)
     {
         glGetProgramInfoLog(program, 512, NULL, infoLog);
+        printf("ERROR::SHADER::PROGRAM::COMPILATION_FAILED\n%s\n", infoLog);
     }
 };
 

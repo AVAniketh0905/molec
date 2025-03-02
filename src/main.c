@@ -97,10 +97,29 @@ int main()
     glDeleteShader(fragment_shader);
 
     // drawing pipeline
-    float vertices[9] = {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.0f};
+    float vertices[] = {
+        // first tri
+        -0.5f,
+        -0.5f,
+        0.0f,
+        -0.5f,
+        0.5f,
+        0.0f,
+        0.5f,
+        0.5f,
+        0.0f,
+
+        // second tri
+        0.5f,
+        0.5f,
+        0.0f,
+        0.5f,
+        -0.5f,
+        0.0f,
+        -0.5f,
+        -0.5f,
+        0.0f,
+    };
 
     unsigned int VBO, VAO;
     glGenBuffers(1, &VBO);
@@ -129,7 +148,7 @@ int main()
 
         glUseProgram(gl_shader_prg);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         glfwPollEvents();
         glfwSwapBuffers(window);

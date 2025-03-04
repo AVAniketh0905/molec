@@ -3,6 +3,9 @@
     "*.js": "javascriptreact",
     "*.tsx": "typescriptreact",
     "mode.h": "c",
-    "ui.h": "c"
+    "ui.h": "c",
+    "cglm.h": "c",
+    "vec3.h": "c",
+    "common.h": "c"
   }
 }

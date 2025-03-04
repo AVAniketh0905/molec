@@ -2,6 +2,7 @@ include/freetype2
 include/glad
 include/GLFW
 include/KHR
+include/cglm
 lib/
 builds/
 

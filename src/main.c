@@ -3,6 +3,7 @@
 #include <shader.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <cglm/cglm.h>
 #include <freetype2/ft2build.h>
 #include FT_FREETYPE_H
 
@@ -101,8 +102,6 @@ int main()
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
 
-    float offset_value;
-
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
@@ -112,24 +111,16 @@ int main()
 
         glUseProgram(sh->ID);
 
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        {
-            offset_value += 0.01f;
-            offset_value = __min(1, offset_value);
-        }
-        else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        {
-            offset_value -= 0.01f;
-            offset_value = __max(-1, offset_value);
-        }
-        shader_setFloat(sh, "offset", offset_value);
-        // float timeValue = glfwGetTime();
-        // float greenValue = sin(timeValue) / 2.0f + 0.5f;
-        // int vertexColorLocation = glGetUniformLocation(gl_shader_prg, "vertexColor");
-        // glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+        mat4 trans;
+        glm_mat4_identity(trans);
+
+        glm_rotate(trans, glm_rad(20 * (float)glfwGetTime()), (vec3){0.0f, 0.0f, 1.0f});
+        glm_scale(trans, (vec3){0.5f, 0.5f, 0.5f});
+
+        unsigned int transformLoc = glGetUniformLocation(sh->ID, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, (const GLfloat *)trans);
 
         glBindVertexArray(VAO);
-        // glDrawArrays(GL_TRIANGLES, 0, 6);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glfwPollEvents();

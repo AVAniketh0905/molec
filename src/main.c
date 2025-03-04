@@ -123,7 +123,7 @@ int main()
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        // send square
+        // second square
         glm_mat4_identity(trans);
 
         glm_translate(trans, (vec3){-0.5f, -0.5f, -0.5f});
@@ -133,6 +133,7 @@ int main()
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, (const GLfloat *)trans);
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        // second end
 
         glfwPollEvents();
         glfwSwapBuffers(window);

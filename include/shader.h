@@ -9,7 +9,7 @@ typedef struct
     unsigned int ID;
 } Shader;
 
-Shader shader_create(const char *vertexPath, const char *fragmentPath);
+Shader *shader_create(const char *vertexPath, const char *fragmentPath);
 void shader_use(const Shader *shader);
 void shader_setBool(const Shader *shader, const char *name, bool value);
 void shader_setInt(const Shader *shader, const char *name, int value);

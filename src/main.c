@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <shader.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <freetype2/ft2build.h>
@@ -71,35 +72,11 @@ int main()
     }
 
     // Shaders
-    // vertex
-    unsigned int vertex_shader;
-    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-
-    glShaderSource(vertex_shader, 1, &vertex_shader_src, NULL);
-    glCompileShader(vertex_shader);
-    ErrLog(vertex_shader, GL_COMPILE_STATUS, success, infoLog);
-
-    // fragment
-    unsigned int fragment_shader;
-    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-
-    glShaderSource(fragment_shader, 1, &fragment_shader_src, NULL);
-    glCompileShader(fragment_shader);
-    ErrLog(fragment_shader, GL_COMPILE_STATUS, success, infoLog);
-
-    // shader program
-    unsigned int gl_shader_prg;
-    gl_shader_prg = glCreateProgram();
-
-    glAttachShader(gl_shader_prg, vertex_shader);
-    glAttachShader(gl_shader_prg, fragment_shader);
-    glLinkProgram(gl_shader_prg);
-
-    glLinkProgram(gl_shader_prg);
-    ErrLog(gl_shader_prg, GL_LINK_STATUS, success, infoLog);
-
-    glDeleteShader(vertex_shader);
-    glDeleteShader(fragment_shader);
+    Shader *sh = shader_create("static/vertex_shader.glsl", "static/fragment_shader.glsl");
+    if (!sh)
+    {
+        printf("Error on creating shader from file\n");
+    }
 
     // drawing pipeline
     float vertices[] = {
@@ -147,7 +124,7 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(gl_shader_prg);
+        glUseProgram(sh->ID);
 
         // float timeValue = glfwGetTime();
         // float greenValue = sin(timeValue) / 2.0f + 0.5f;
@@ -164,7 +141,7 @@ int main()
 
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    glDeleteProgram(gl_shader_prg);
+    shader_delete(sh);
     glfwTerminate();
     return 0;
 };

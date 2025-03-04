@@ -34,7 +34,7 @@ void processInput(GLFWwindow *window)
         glfwSetWindowShouldClose(window, GL_TRUE);
 };
 
-void ErrLog(GLuint program, GLenum pname, int success, char *infoLog)
+static void ErrLog(GLuint program, GLenum pname, int success, char *infoLog)
 {
     glGetProgramiv(program, pname, &success);
     if (!success)

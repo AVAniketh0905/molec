@@ -1,4 +1,7 @@
-include/
+include/freetype2
+include/glad
+include/GLFW
+include/KHR
 lib/
 builds/
 

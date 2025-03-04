@@ -114,8 +114,8 @@ int main()
         mat4 trans;
         glm_mat4_identity(trans);
 
+        glm_translate(trans, (vec3){0.5f, -0.5f, 0.5f});
         glm_rotate(trans, glm_rad(20 * (float)glfwGetTime()), (vec3){0.0f, 0.0f, 1.0f});
-        glm_scale(trans, (vec3){0.5f, 0.5f, 0.5f});
 
         unsigned int transformLoc = glGetUniformLocation(sh->ID, "transform");
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, (const GLfloat *)trans);

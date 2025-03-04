@@ -6,24 +6,6 @@
 #include <freetype2/ft2build.h>
 #include FT_FREETYPE_H
 
-const char *vertex_shader_src = "#version 330 core\n"
-                                "layout (location = 0) in vec3 aPos;\n"
-                                "layout (location = 1) in vec3 aCol;\n"
-                                "out vec4 vertexColor;\n"
-                                "void main()\n"
-                                "{\n"
-                                "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-                                "   vertexColor = vec4(aCol.x, aCol.y, aCol.z, 1.0);\n"
-                                "}\0";
-
-const char *fragment_shader_src = "#version 330 core\n"
-                                  "in vec4 vertexColor;\n"
-                                  "out vec4 FragColor;\n"
-                                  "void main()\n"
-                                  "{\n"
-                                  "    FragColor = vertexColor;\n"
-                                  "}\0";
-
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
@@ -71,6 +53,8 @@ int main()
         return -1;
     }
 
+    glfwSwapInterval(1);
+
     // Shaders
     Shader *sh = shader_create("static/vertex_shader.glsl", "static/fragment_shader.glsl");
     if (!sh)
@@ -117,6 +101,8 @@ int main()
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
 
+    float offset_value;
+
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
@@ -126,6 +112,17 @@ int main()
 
         glUseProgram(sh->ID);
 
+        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        {
+            offset_value += 0.01f;
+            offset_value = __min(1, offset_value);
+        }
+        else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        {
+            offset_value -= 0.01f;
+            offset_value = __max(-1, offset_value);
+        }
+        shader_setFloat(sh, "offset", offset_value);
         // float timeValue = glfwGetTime();
         // float greenValue = sin(timeValue) / 2.0f + 0.5f;
         // int vertexColorLocation = glGetUniformLocation(gl_shader_prg, "vertexColor");

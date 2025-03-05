@@ -111,29 +111,27 @@ int main()
 
         glUseProgram(sh->ID);
 
-        mat4 trans;
-        glm_mat4_identity(trans);
+        mat4 model;
+        glm_mat4_identity(model);
+        glm_rotate(model, glm_rad(10 * (float)glfwGetTime()), (vec3){1.0f, 1.0f, 0.0f});
 
-        glm_translate(trans, (vec3){0.5f, -0.5f, 0.5f});
-        glm_rotate(trans, glm_rad(20 * (float)glfwGetTime()), (vec3){0.0f, 0.0f, 1.0f});
+        mat4 view;
+        glm_mat4_identity(view);
+        glm_translate(view, (vec3){0.0f, 0.0f, -3.0f});
+
+        mat4 projection;
+        glm_perspective(glm_rad(45.0f), 800.0f / 600.0f, 0.1f, 100.0f, projection);
+
+        mat4 result;
+        // order matters
+        glm_mat4_mul(view, model, result);
+        glm_mat4_mul(projection, result, result);
 
         unsigned int transformLoc = glGetUniformLocation(sh->ID, "transform");
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, (const GLfloat *)trans);
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, (const GLfloat *)result);
 
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-        // second square
-        glm_mat4_identity(trans);
-
-        glm_translate(trans, (vec3){-0.5f, -0.5f, -0.5f});
-        glm_rotate(trans, -glm_rad(20 * (float)glfwGetTime()), (vec3){0.0f, 0.0f, 1.0f});
-        glm_scale(trans, (vec3){0.5, 0.5, 0.5});
-
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, (const GLfloat *)trans);
-
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        // second end
 
         glfwPollEvents();
         glfwSwapBuffers(window);

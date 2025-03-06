@@ -14,8 +14,6 @@ float lastX = WIDTH / 2.0f;
 float lastY = HEIGHT / 2.0f;
 bool firstMouse = true;
 
-float fov = 45.0f;
-
 float deltaTime = 0.0f; // Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
 
@@ -44,7 +42,6 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 {
     camera_processMouseScroll(&camera, (float)yoffset);
-    fov = camera.zoom;
 }
 
 void processInput(GLFWwindow *window)
@@ -227,7 +224,7 @@ int main()
         camera_getViewMatrix(&camera, view);
 
         mat4 projection;
-        glm_perspective(glm_rad(fov), WIDTH / HEIGHT, 0.1f, 100.0f, projection);
+        glm_perspective(glm_rad(camera.zoom), WIDTH / HEIGHT, 0.1f, 100.0f, projection);
 
         mat4 result;
         // order matters

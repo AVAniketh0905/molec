@@ -1,27 +1,23 @@
-#include <stdio.h>
 #include <math.h>
 #include <shader.h>
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <cglm/cglm.h>
 #include <freetype2/ft2build.h>
 #include FT_FREETYPE_H
+#include <camera.h>
 
-float WIDTH = 800.0f;
-float HEIGHT = 600.0f;
-int firstMouse = 1;
+const float WIDTH = 800.0f;
+const float HEIGHT = 600.0f;
 
-vec3 cameraPos = {0.0f, 0.0f, 3.0f};
-vec3 cameraFront = {0.0f, 0.0f, -1.0f};
-vec3 cameraUp = {0.0f, 1.0f, 0.0f};
+Camera camera;
+
+float lastX = WIDTH / 2.0f;
+float lastY = HEIGHT / 2.0f;
+bool firstMouse = true;
 
 float fov = 45.0f;
 
 float deltaTime = 0.0f; // Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
-
-float yaw = -90.0f;
-float pitch = 0.0f;
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
@@ -30,47 +26,25 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 
 void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 {
-    float lastX = WIDTH / 2, lastY = HEIGHT / 2;
-
     if (firstMouse)
     {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = 0;
+        lastX = (float)xpos;
+        lastY = (float)ypos;
+        firstMouse = false;
     }
 
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos;
-    lastX = xpos;
-    lastY = ypos;
+    float xoffset = (float)xpos - lastX;
+    float yoffset = (float)lastY - ypos;
+    lastX = (float)xpos;
+    lastY = (float)ypos;
 
-    float sensitivity = 0.001f;
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
-
-    yaw += xoffset;
-    pitch += yoffset;
-
-    if (pitch > 89.0f)
-        pitch = 89.0f;
-    if (pitch < -89.0f)
-        pitch = -89.0f;
-
-    vec3 direction;
-    direction[0] = cos(glm_rad(yaw)) * cos(glm_rad(pitch));
-    direction[1] = sin(glm_rad(pitch));
-    direction[2] = sin(glm_rad(yaw)) * cos(glm_rad(pitch));
-    glm_normalize(direction);
-    glm_vec3_copy(direction, cameraFront);
+    camera_processMouseMovement(&camera, xoffset, yoffset, true);
 };
 
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 {
-    fov -= (float)yoffset;
-    if (fov < 1.0f)
-        fov = 1.0f;
-    if (fov > 45.0f)
-        fov = 45.0f;
+    camera_processMouseScroll(&camera, (float)yoffset);
+    fov = camera.zoom;
 }
 
 void processInput(GLFWwindow *window)
@@ -79,31 +53,22 @@ void processInput(GLFWwindow *window)
     {
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
-};
 
-void processCameraInput(GLFWwindow *window, float deltaTime)
-{
-    const float cameraSpeed = 2.5f * deltaTime; // adjust accordingly
-    vec3 right;
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        glm_vec3_muladds(cameraFront, cameraSpeed, cameraPos);
+        camera_processKeyboard(&camera, CAM_FORWARD, deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        glm_vec3_muladds(cameraFront, -cameraSpeed, cameraPos);
+        camera_processKeyboard(&camera, CAM_BACKWARD, deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        glm_vec3_cross(cameraFront, cameraUp, right);
-        glm_vec3_normalize(right);
-        glm_vec3_muladds(right, -cameraSpeed, cameraPos);
+        camera_processKeyboard(&camera, CAM_LEFT, deltaTime);
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        glm_vec3_cross(cameraFront, cameraUp, right);
-        glm_vec3_normalize(right);
-        glm_vec3_muladds(right, cameraSpeed, cameraPos);
+        camera_processKeyboard(&camera, CAM_RIGHT, deltaTime);
     }
 };
 
@@ -155,6 +120,9 @@ int main()
     {
         printf("Error on creating shader from file\n");
     }
+
+    // camera init
+    camera_create_position(&camera, (vec3){0.0f, 0.0f, 3.0f});
 
     // drawing pipeline
     // float vertices[] = {
@@ -245,7 +213,6 @@ int main()
         lastFrame = currentFrame;
 
         processInput(window);
-        processCameraInput(window, deltaTime);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -257,12 +224,7 @@ int main()
         glm_rotate(model, glm_rad(55.0f), (vec3){0.0f, 1.0f, 0.0f});
 
         mat4 view;
-        glm_mat4_identity(view);
-
-        vec3 camTarget;
-        glm_vec3_add(cameraPos, cameraFront, camTarget);
-
-        glm_lookat(cameraPos, camTarget, cameraUp, view);
+        camera_getViewMatrix(&camera, view);
 
         mat4 projection;
         glm_perspective(glm_rad(fov), WIDTH / HEIGHT, 0.1f, 100.0f, projection);

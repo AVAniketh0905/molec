@@ -7,13 +7,71 @@
 #include <freetype2/ft2build.h>
 #include FT_FREETYPE_H
 
+float WIDTH = 800.0f;
+float HEIGHT = 600.0f;
+int firstMouse = 1;
+
+vec3 cameraPos = {0.0f, 0.0f, 3.0f};
+vec3 cameraFront = {0.0f, 0.0f, -1.0f};
+vec3 cameraUp = {0.0f, 1.0f, 0.0f};
+
+float fov = 45.0f;
+
 float deltaTime = 0.0f; // Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
+
+float yaw = -90.0f;
+float pitch = 0.0f;
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
 };
+
+void mouse_callback(GLFWwindow *window, double xpos, double ypos)
+{
+    float lastX = WIDTH / 2, lastY = HEIGHT / 2;
+
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = 0;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos;
+    lastX = xpos;
+    lastY = ypos;
+
+    float sensitivity = 0.001f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    yaw += xoffset;
+    pitch += yoffset;
+
+    if (pitch > 89.0f)
+        pitch = 89.0f;
+    if (pitch < -89.0f)
+        pitch = -89.0f;
+
+    vec3 direction;
+    direction[0] = cos(glm_rad(yaw)) * cos(glm_rad(pitch));
+    direction[1] = sin(glm_rad(pitch));
+    direction[2] = sin(glm_rad(yaw)) * cos(glm_rad(pitch));
+    glm_normalize(direction);
+    glm_vec3_copy(direction, cameraFront);
+};
+
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
+{
+    fov -= (float)yoffset;
+    if (fov < 1.0f)
+        fov = 1.0f;
+    if (fov > 45.0f)
+        fov = 45.0f;
+}
 
 void processInput(GLFWwindow *window)
 {
@@ -23,9 +81,9 @@ void processInput(GLFWwindow *window)
     }
 };
 
-void processCameraInput(GLFWwindow *window, vec3 cameraPos, vec3 cameraFront, vec3 cameraUp)
+void processCameraInput(GLFWwindow *window, float deltaTime)
 {
-    const float cameraSpeed = 0.05f; // adjust accordingly
+    const float cameraSpeed = 2.5f * deltaTime; // adjust accordingly
     vec3 right;
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
@@ -69,7 +127,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow *window = glfwCreateWindow(800, 600, "LearningGL", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "LearningGL", NULL, NULL);
     if (window == NULL)
     {
         printf("Failed to create GLFW window\n");
@@ -78,6 +136,10 @@ int main()
 
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
+
+    // glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -176,14 +238,14 @@ int main()
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0);
 
-    vec3 cameraPos = {0.0f, 0.0f, 3.0f};
-    vec3 cameraFront = {0.0f, 0.0f, -1.0f};
-    vec3 cameraUp = {0.0f, 1.0f, 0.0f};
-
     while (!glfwWindowShouldClose(window))
     {
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
         processInput(window);
-        processCameraInput(window, cameraPos, cameraFront, cameraUp);
+        processCameraInput(window, deltaTime);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -203,7 +265,7 @@ int main()
         glm_lookat(cameraPos, camTarget, cameraUp, view);
 
         mat4 projection;
-        glm_perspective(glm_rad(45.0f), 800.0f / 600.0f, 0.1f, 100.0f, projection);
+        glm_perspective(glm_rad(fov), WIDTH / HEIGHT, 0.1f, 100.0f, projection);
 
         mat4 result;
         // order matters

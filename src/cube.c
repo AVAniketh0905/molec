@@ -47,9 +47,7 @@ void cube_gen_vecs(Cube *cube, vec3 color)
 void cube_init(Cube *cube, vec3 position, vec3 color, float scale)
 {
     cube_gen_vecs(cube, color);
-    cube->position[0] = position[0];
-    cube->position[1] = position[1];
-    cube->position[2] = position[2];
+    glm_vec3_copy(position, cube->position);
     cube->scale = scale;
 
     glGenBuffers(1, &cube->VBO);
@@ -75,6 +73,8 @@ void cube_init(Cube *cube, vec3 position, vec3 color, float scale)
 
 void cube_draw(Cube *cube, Shader *sh, mat4 view, mat4 projection)
 {
+    glUseProgram(sh->ID);
+
     mat4 model;
     glm_mat4_identity(model);
     glm_translate(model, cube->position);
@@ -92,6 +92,7 @@ void cube_draw(Cube *cube, Shader *sh, mat4 view, mat4 projection)
 
     glBindVertexArray(cube->VAO);
     glDrawElements(GL_TRIANGLES, CUBE_INDICES, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 };
 
 void cube_delete(Cube *cube)

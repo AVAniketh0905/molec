@@ -5,6 +5,7 @@
 #include FT_FREETYPE_H
 #include <camera.h>
 #include <cube.h>
+#include <sphere.h>
 
 const float WIDTH = 800.0f;
 const float HEIGHT = 600.0f;
@@ -124,7 +125,10 @@ int main()
 
     // cube init
     Cube *cube;
-    cube_init(cube, (vec3){0.0f, 0.0f, 1.0f}, (vec3){0.0f, 1.0f, 0.0f}, 3.0f);
+    cube_init(cube, (vec3){0.0f, 0.0f, 1.0f}, (vec3){0.0f, 1.0f, 0.0f}, 1.0f);
+
+    Sphere *sphere = malloc(sizeof(Sphere));
+    sphere_init(sphere, (vec3){1.0f, 1.0f, 0.0f}, (vec3){1.0f, 0.0f, 0.0f}, 1.0f);
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -143,13 +147,14 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(sh->ID);
-
         mat4 view;
         camera_getViewMatrix(&camera, view);
 
         mat4 projection;
         glm_perspective(glm_rad(camera.zoom), WIDTH / HEIGHT, 0.1f, 100.0f, projection);
+
+        // sphere draw
+        sphere_draw(sphere, sh, view, projection);
 
         // cube draw
         cube_draw(cube, sh, view, projection);
@@ -158,7 +163,8 @@ int main()
         glfwSwapBuffers(window);
     }
 
-    // cube del
+    sphere_delete(sphere);
+    free(sphere);
     cube_delete(cube);
     shader_delete(sh);
     glfwTerminate();

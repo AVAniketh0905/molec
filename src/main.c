@@ -6,6 +6,7 @@
 #include <camera.h>
 #include <cube.h>
 #include <sphere.h>
+#include <cylinder.h>
 
 const float WIDTH = 800.0f;
 const float HEIGHT = 600.0f;
@@ -121,7 +122,7 @@ int main()
     }
 
     // camera init
-    camera_create_position(&camera, (vec3){0.0f, 0.0f, 3.0f});
+    camera_create_position(&camera, (vec3){0.0f, 0.0f, 10.0f});
 
     // cube init
     Cube *cube;
@@ -129,6 +130,9 @@ int main()
 
     Sphere *sphere = malloc(sizeof(Sphere));
     sphere_init(sphere, (vec3){1.0f, 1.0f, 0.0f}, (vec3){1.0f, 0.0f, 0.0f}, 1.0f);
+
+    Cylinder *cylinder = malloc(sizeof(Cylinder));
+    cylinder_init(cylinder, (vec3){1.1f, 0.0f, 1.1f}, (vec3){0.4f, 0.1f, 1.0f}, 1.0f, 5.0f);
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -159,13 +163,20 @@ int main()
         // cube draw
         cube_draw(cube, sh, view, projection);
 
+        // cylinder draw
+        cylinder_draw(cylinder, sh, view, projection);
+
         glfwPollEvents();
         glfwSwapBuffers(window);
     }
 
+    cylinder_delete(cylinder);
     sphere_delete(sphere);
-    free(sphere);
     cube_delete(cube);
+
+    free(cylinder);
+    free(sphere);
+
     shader_delete(sh);
     glfwTerminate();
     return 0;

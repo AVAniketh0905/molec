@@ -44,9 +44,13 @@ void cube_gen_vecs(Cube *cube, vec3 color)
     memcpy(cube->indices, base_indices, sizeof(base_indices));
 }
 
-void cube_init(Cube *cube, vec3 position, vec3 color)
+void cube_init(Cube *cube, vec3 position, vec3 color, float scale)
 {
     cube_gen_vecs(cube, color);
+    cube->position[0] = position[0];
+    cube->position[1] = position[1];
+    cube->position[2] = position[2];
+    cube->scale = scale;
 
     glGenBuffers(1, &cube->VBO);
     glGenBuffers(1, &cube->EBO);
@@ -75,6 +79,7 @@ void cube_draw(Cube *cube, Shader *sh, mat4 view, mat4 projection)
     glm_mat4_identity(model);
     glm_translate(model, cube->position);
     // TODO: Change angle
+    glm_scale(model, (vec3){cube->scale, cube->scale, cube->scale});
     glm_rotate(model, glm_rad(55.0f), (vec3){0.0f, 1.0f, 0.0f});
 
     mat4 result;

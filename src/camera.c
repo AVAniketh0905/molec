@@ -15,20 +15,16 @@ void update_cam_vecs(Camera *camera)
     front[0] = cos(glm_rad(camera->yaw)) * cos(glm_rad(camera->pitch));
     front[1] = sin(glm_rad(camera->pitch));
     front[2] = sin(glm_rad(camera->yaw)) * cos(glm_rad(camera->pitch));
-    glm_normalize(front);
 
+    glm_normalize(front);
     glm_vec3_copy(front, camera->front);
 
     // also re-calculate the Right and Up vector
-    vec3 right;
-    glm_cross(camera->front, camera->up, right);
-    glm_normalize(right); // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-    glm_vec3_copy(right, camera->right);
+    glm_cross(camera->front, camera->up, camera->right);
+    glm_normalize(camera->right); // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
 
-    vec3 up;
-    glm_cross(right, front, up);
-    glm_normalize(up);
-    glm_vec3_copy(up, camera->up);
+    glm_cross(camera->right, front, camera->up);
+    glm_normalize(camera->up);
 };
 
 void camera_create(Camera *camera, vec3 position, vec3 up, float yaw, float pitch)
@@ -89,7 +85,8 @@ void camera_processKeyboard(Camera *camera, Camera_Movement direction, float del
         glm_vec3_muladds(camera->right, velocity, camera->position);
 
     // FPS like
-    // camera->position[1] = 0;
+    camera->position[1] = 0;
+    update_cam_vecs(camera);
 };
 
 void camera_processMouseMovement(Camera *camera, float xoffset, float yoffset, GLboolean constrainPitch)

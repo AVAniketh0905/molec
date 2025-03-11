@@ -24,7 +24,7 @@ void atom_draw(Atom *atom, Shader *sh, mat4 view, mat4 projection)
     {
         sphere_draw(atom->sphere, sh, view, projection);
     }
-}
+};
 
 void atom_delete(Atom *atom)
 {
@@ -32,6 +32,5 @@ void atom_delete(Atom *atom)
     {
         sphere_delete(atom->sphere);
         free(atom->sphere);
-        atom->sphere = NULL;
     }
-}
+};

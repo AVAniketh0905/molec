@@ -4,7 +4,7 @@
 #include <cglm/cglm.h>
 #include <string.h>
 #include <shader.h>
-#include <sphere.h> // Include your sphere rendering functions
+#include <sphere.h>
 
 typedef struct
 {
@@ -12,11 +12,11 @@ typedef struct
     vec3 position;  // 3D coordinates of the atom (x, y, z)
     float radius;   // Atomic radius for rendering (e.g., van der Waals radius)
     vec4 color;     // RGBA color for the atom
-    Sphere *sphere; // Sphere object for rendering the atom
+    Sphere *sphere;
 } Atom;
 
-// Atom functions
 void atom_init(Atom *atom, const char *symbol, vec3 position, vec4 color, float radius);
+void atom_rotate(Atom *atom, float angle, vec3 axis);
 void atom_draw(Atom *atom, Shader *sh, mat4 view, mat4 projection);
 void atom_delete(Atom *atom);
 

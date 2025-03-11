@@ -7,7 +7,7 @@
 #include <cube.h>
 #include <sphere.h>
 #include <cylinder.h>
-#include <atom.h>
+#include <molecule.h>
 
 const float WIDTH = 800.0f;
 const float HEIGHT = 600.0f;
@@ -134,10 +134,22 @@ int main()
 
     // Cylinder *cylinder = malloc(sizeof(Cylinder));
     // cylinder_init(cylinder, (vec3){1.1f, 0.0f, 1.1f}, (vec3){0.4f, 0.1f, 1.0f}, 1.0f, 5.0f);
-    Atom hydrogen;
-    vec3 position = {0.0f, 1.0f, 0.0f};
-    vec4 color = {1.0f, 1.0f, 1.0f, 1.0f}; // White color for hydrogen
-    atom_init(&hydrogen, "H", position, color, 1.2f);
+
+    Atom atoms[3];
+    vec4 h_color = {1.0f, 0.0f, 0.0f, 1.0f}; // Red for hydrogen (RGBA)
+    vec4 o_color = {0.0f, 0.0f, 1.0f, 1.0f}; // Blue for oxygen (RGBA)
+
+    // Initialize the atoms with positions, colors, and radii
+    atom_init(&atoms[0], "O", (vec3){0.0f, 0.0f, 0.0f}, o_color, 0.3f); // Oxygen
+    atom_init(&atoms[1], "H", (vec3){1.0f, 0.0f, 0.0f}, h_color, 0.2f); // Hydrogen 1
+    atom_init(&atoms[2], "H", (vec3){0.0f, 1.0f, 0.0f}, h_color, 0.2f); // Hydrogen 2
+
+    Molecule *water = (Molecule *)malloc(sizeof(Molecule));
+    if (!water)
+    {
+        printf("Error allocating memory to create Molecule\n");
+    }
+    molecule_init(water, "Water", 3, atoms);
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -162,14 +174,16 @@ int main()
         mat4 projection;
         glm_perspective(glm_rad(camera.zoom), WIDTH / HEIGHT, 0.1f, 100.0f, projection);
 
-        // atom draw
-        atom_draw(&hydrogen, sh, view, projection);
+        // mol draw
+        // TODO: add angle axis, property to sphere/cylinder and control them in theri res draw func fro easy rotation
+        molecule_draw(water, sh, view, projection);
 
         glfwPollEvents();
         glfwSwapBuffers(window);
     }
 
-    atom_delete(&hydrogen);
+    molecule_delete(water);
+    free(water);
     shader_delete(sh);
     glfwTerminate();
     return 0;

@@ -5,7 +5,7 @@
 #include <glad/glad.h>
 #include <cglm/cglm.h>
 
-#define CUBE_VERTICES 48
+#define CUBE_VERTICES 216
 #define CUBE_INDICES 36
 
 typedef struct

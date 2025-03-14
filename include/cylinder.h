@@ -20,7 +20,7 @@ typedef struct
     float radius;
     float height;
 
-    float vertices[12 * (CY_SECTOR_COUNT + 1)];
+    float vertices[2 * 9 * (CY_SECTOR_COUNT + 1)];
     unsigned int indices[6 * CY_SECTOR_COUNT];
 } Cylinder;
 

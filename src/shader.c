@@ -119,18 +119,27 @@ void shader_use(const Shader *shader)
 
 void shader_setBool(const Shader *shader, const char *name, bool value)
 {
+    glUseProgram(shader->ID);
     glUniform1i(glGetUniformLocation(shader->ID, name), value);
 };
 
 void shader_setInt(const Shader *shader, const char *name, int value)
 {
+    glUseProgram(shader->ID);
     glUniform1i(glGetUniformLocation(shader->ID, name), value);
 };
 
 void shader_setFloat(const Shader *shader, const char *name, float value)
 {
+    glUseProgram(shader->ID);
     glUniform1f(glGetUniformLocation(shader->ID, name), value);
 };
+
+void shader_setVec3(const Shader *shader, const char *name, vec3 v)
+{
+    glUseProgram(shader->ID);
+    glUniform3fv(glGetUniformLocation(shader->ID, name), 1, v);
+}
 
 void shader_delete(Shader *shader)
 {

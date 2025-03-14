@@ -5,24 +5,32 @@ void cylinder_gen_sectors(Cylinder *cylinder)
     const float sectorStep = 2 * CY_PI / CY_SECTOR_COUNT;
     int vi = 0;
 
-    for (int i = 0; i < 2; i++)
+    // for lateral surface
+    for (int j = 0; j <= CY_SECTOR_COUNT; j++)
     {
-        for (int j = 0; j <= CY_SECTOR_COUNT; j++)
+        float sectorAngle = j * sectorStep;
+        float x = cylinder->radius * cos(sectorAngle);
+        float y = cylinder->radius * sin(sectorAngle);
+
+        for (int i = 0; i < 2; i++)
         {
-            float sectorAngle = j * sectorStep;
-            float x = cylinder->radius * cos(sectorAngle);
-            float y = cylinder->radius * sin(sectorAngle);
+            float z = (1 - 2 * i) * (cylinder->height / 2); // Top and bottom of the side
 
             cylinder->vertices[vi++] = x;
             cylinder->vertices[vi++] = y;
-            cylinder->vertices[vi++] = (1 - 2 * i) * (cylinder->height / 2);
+            cylinder->vertices[vi++] = z;
 
-            // color
             cylinder->vertices[vi++] = cylinder->color[0];
             cylinder->vertices[vi++] = cylinder->color[1];
             cylinder->vertices[vi++] = cylinder->color[2];
-        };
-    };
+
+            // Normals (side)
+            float lengthInv = -1.0f / cylinder->radius;
+            cylinder->vertices[vi++] = x * lengthInv;
+            cylinder->vertices[vi++] = y * lengthInv;
+            cylinder->vertices[vi++] = 0.0f;
+        }
+    }
 };
 
 void cylinder_gen_indices(Cylinder *cylinder)
@@ -73,11 +81,14 @@ void cylinder_init(Cylinder *cylinder, vec3 position, vec3 direction, vec3 color
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cylinder->EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cylinder->indices), cylinder->indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 };
 
 void cylinder_draw(Cylinder *cylinder, Shader *sh, mat4 view, mat4 projection)
@@ -104,6 +115,9 @@ void cylinder_draw(Cylinder *cylinder, Shader *sh, mat4 view, mat4 projection)
     // order matters
     glm_mat4_mul(view, model, result);
     glm_mat4_mul(projection, result, result);
+
+    unsigned int modelLoc = glGetUniformLocation(sh->ID, "model");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (const GLfloat *)model);
 
     unsigned int transformLoc = glGetUniformLocation(sh->ID, "transform");
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, (const GLfloat *)result);

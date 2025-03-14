@@ -21,6 +21,25 @@ bool firstMouse = true;
 float deltaTime = 0.0f; // Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
 
+Atom atoms[3];
+Bond bonds[2];
+
+void temporary_init_molecule()
+{
+    vec4 bond_color = {1.0f, 1.0f, 1.0f, 1.0f}; // White for Bond (RGBA)
+    vec4 h_color = {1.0f, 0.0f, 0.0f, 1.0f};    // Red for hydrogen (RGBA)
+    vec4 o_color = {0.0f, 0.0f, 1.0f, 1.0f};    // Blue for oxygen (RGBA)
+
+    // Initialize the atoms with positions, colors, and radii
+    atom_init(&atoms[0], "O", (vec3){0.0f, 0.0f, 0.0f}, o_color, 0.3f); // Oxygen
+    atom_init(&atoms[1], "H", (vec3){1.0f, 0.0f, 0.0f}, h_color, 0.2f); // Hydrogen 1
+    atom_init(&atoms[2], "H", (vec3){0.0f, 1.0f, 0.0f}, h_color, 0.2f); // Hydrogen 2
+
+    // Init Bonds
+    bond_init(&bonds[0], SINGLE_BOND, &atoms[0], &atoms[1], bond_color, 0.05f); // O-H bond 1
+    bond_init(&bonds[1], SINGLE_BOND, &atoms[0], &atoms[2], bond_color, 0.05f); // O-H bond 2
+}
+
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
@@ -114,6 +133,7 @@ int main()
     }
 
     glfwSwapInterval(1);
+    glEnable(GL_DEPTH_TEST); // Enable depth testing
 
     // Shaders
     Shader *sh = shader_create("static/vertex_shader.glsl", "static/fragment_shader.glsl");
@@ -122,30 +142,26 @@ int main()
         printf("Error on creating shader from file\n");
     }
 
+    Shader *light_sh = shader_create("static/light_vs.glsl", "static/light_fs.glsl");
+    if (!light_sh)
+    {
+        printf("Error on creating light shader from file\n");
+    }
+
     // camera init
     camera_create_position(&camera, (vec3){0.0f, 0.0f, 10.0f});
 
-    Atom atoms[3];
-    Bond bonds[2];
-    vec4 bond_color = {1.0f, 1.0f, 1.0f, 1.0f}; // White for Bond (RGBA)
-    vec4 h_color = {1.0f, 0.0f, 0.0f, 1.0f};    // Red for hydrogen (RGBA)
-    vec4 o_color = {0.0f, 0.0f, 1.0f, 1.0f};    // Blue for oxygen (RGBA)
-
-    // Initialize the atoms with positions, colors, and radii
-    atom_init(&atoms[0], "O", (vec3){0.0f, 0.0f, 0.0f}, o_color, 0.3f); // Oxygen
-    atom_init(&atoms[1], "H", (vec3){1.0f, 0.0f, 0.0f}, h_color, 0.2f); // Hydrogen 1
-    atom_init(&atoms[2], "H", (vec3){0.0f, 1.0f, 0.0f}, h_color, 0.2f); // Hydrogen 2
-
-    // Init Bonds
-    bond_init(&bonds[0], SINGLE_BOND, &atoms[0], &atoms[1], bond_color, 0.05f); // O-H bond 1
-    bond_init(&bonds[1], SINGLE_BOND, &atoms[0], &atoms[2], bond_color, 0.05f); // O-H bond 2
-
+    temporary_init_molecule();
     Molecule *water = (Molecule *)malloc(sizeof(Molecule));
     if (!water)
     {
         printf("Error allocating memory to create Molecule\n");
     }
     molecule_init(water, "Water", 3, atoms, 2, bonds);
+
+    // cube
+    Cube *light = (Cube *)malloc(sizeof(Cube));
+    cube_init(light, (vec3){0.0f, 0.0f, -10.0f}, (vec3){1.0f, 1.0f, 1.0f}, 1.0f);
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -162,7 +178,7 @@ int main()
         processInput(window);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         mat4 view;
         camera_getViewMatrix(&camera, view);
@@ -170,7 +186,11 @@ int main()
         mat4 projection;
         glm_perspective(glm_rad(camera.zoom), WIDTH / HEIGHT, 0.1f, 100.0f, projection);
 
-        // mol draw
+        cube_draw(light, light_sh, view, projection);
+
+        shader_setVec3(sh, "lightPos", light->position);
+        shader_setVec3(sh, "lightColor", light->color);
+
         // TODO: add angle axis, property to sphere/cylinder and control them in theri res draw func fro easy rotation
         molecule_draw(water, sh, view, projection);
 
@@ -178,9 +198,15 @@ int main()
         glfwSwapBuffers(window);
     }
 
+    cube_delete(light);
+    free(light);
+
     molecule_delete(water);
     free(water);
+
+    shader_delete(light_sh);
     shader_delete(sh);
+
     glfwTerminate();
     return 0;
 };

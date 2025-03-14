@@ -4,6 +4,7 @@ void sphere_gen_stacks_sectors(Sphere *sphere)
 {
     const float sectorStep = 2 * SP_PI / SECTOR_COUNT;
     const float stackStep = SP_PI / STACK_COUNT;
+    float lengthInv = -1.0f / sphere->radius;
     float sectorAngle, stackAngle; // (theta, phi)
 
     int vi = 0;
@@ -28,6 +29,11 @@ void sphere_gen_stacks_sectors(Sphere *sphere)
             sphere->vertices[vi++] = sphere->color[0];
             sphere->vertices[vi++] = sphere->color[1];
             sphere->vertices[vi++] = sphere->color[2];
+
+            // normals
+            sphere->vertices[vi++] = x * lengthInv;
+            sphere->vertices[vi++] = y * lengthInv;
+            sphere->vertices[vi++] = z * lengthInv;
         };
     };
 
@@ -91,11 +97,14 @@ void sphere_init(Sphere *sphere, vec3 position, vec3 color, float radius)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphere->EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(sphere->indices), sphere->indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 };
 
 void sphere_draw(Sphere *sphere, Shader *sh, mat4 view, mat4 projection)
@@ -110,6 +119,9 @@ void sphere_draw(Sphere *sphere, Shader *sh, mat4 view, mat4 projection)
     // order matters
     glm_mat4_mul(view, model, result);
     glm_mat4_mul(projection, result, result);
+
+    unsigned int modelLoc = glGetUniformLocation(sh->ID, "model");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (const GLfloat *)model);
 
     unsigned int transformLoc = glGetUniformLocation(sh->ID, "transform");
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, (const GLfloat *)result);

@@ -19,7 +19,7 @@ typedef struct
     vec3 color;
     float radius;
 
-    float vertices[6 * (SECTOR_COUNT + 1) * (STACK_COUNT + 1)];
+    float vertices[9 * (SECTOR_COUNT + 1) * (STACK_COUNT + 1)];
     unsigned int indices[6 * (STACK_COUNT - 1) * SECTOR_COUNT];
 } Sphere;
 

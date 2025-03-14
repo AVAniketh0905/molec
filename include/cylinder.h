@@ -15,6 +15,7 @@ typedef struct
     unsigned int EBO;
 
     vec3 position; // center of sphere
+    vec3 direction;
     vec3 color;
     float radius;
     float height;
@@ -23,7 +24,7 @@ typedef struct
     unsigned int indices[6 * CY_SECTOR_COUNT];
 } Cylinder;
 
-void cylinder_init(Cylinder *cylinder, vec3 position, vec3 color, float radius, float height);
+void cylinder_init(Cylinder *cylinder, vec3 position, vec3 direction, vec3 color, float radius, float height);
 
 void cylinder_draw(Cylinder *cylinder, Shader *sh, mat4 view, mat4 projection);
 

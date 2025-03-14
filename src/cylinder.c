@@ -44,9 +44,10 @@ void cylinder_gen_indices(Cylinder *cylinder)
     };
 };
 
-void cylinder_init(Cylinder *cylinder, vec3 position, vec3 color, float radius, float height)
+void cylinder_init(Cylinder *cylinder, vec3 position, vec3 direction, vec3 color, float radius, float height)
 {
     glm_vec3_copy(position, cylinder->position);
+    glm_vec3_copy(direction, cylinder->direction);
     glm_vec3_copy(color, cylinder->color);
     cylinder->radius = radius;
     cylinder->height = height;
@@ -86,6 +87,18 @@ void cylinder_draw(Cylinder *cylinder, Shader *sh, mat4 view, mat4 projection)
     mat4 model;
     glm_mat4_identity(model);
     glm_translate(model, cylinder->position);
+
+    vec3 z_axis = {0.0f, 0.0f, 1.0f};
+    vec3 rotation_axis;
+    glm_vec3_cross(z_axis, cylinder->direction, rotation_axis);
+
+    float angle = acosf(glm_vec3_dot(z_axis, cylinder->direction));
+    if (glm_vec3_norm(rotation_axis) > 0.001f) // Avoid zero division
+    {
+        glm_vec3_normalize(rotation_axis);
+        mat4 rotation;
+        glm_rotate(model, angle, rotation_axis);
+    }
 
     mat4 result;
     // order matters

@@ -125,31 +125,27 @@ int main()
     // camera init
     camera_create_position(&camera, (vec3){0.0f, 0.0f, 10.0f});
 
-    // // cube init
-    // Cube *cube;
-    // cube_init(cube, (vec3){0.0f, 0.0f, 1.0f}, (vec3){0.0f, 1.0f, 0.0f}, 1.0f);
-
-    // Sphere *sphere = malloc(sizeof(Sphere));
-    // sphere_init(sphere, (vec3){1.0f, 1.0f, 0.0f}, (vec3){1.0f, 0.0f, 0.0f}, 1.0f);
-
-    // Cylinder *cylinder = malloc(sizeof(Cylinder));
-    // cylinder_init(cylinder, (vec3){1.1f, 0.0f, 1.1f}, (vec3){0.4f, 0.1f, 1.0f}, 1.0f, 5.0f);
-
     Atom atoms[3];
-    vec4 h_color = {1.0f, 0.0f, 0.0f, 1.0f}; // Red for hydrogen (RGBA)
-    vec4 o_color = {0.0f, 0.0f, 1.0f, 1.0f}; // Blue for oxygen (RGBA)
+    Bond bonds[2];
+    vec4 bond_color = {1.0f, 1.0f, 1.0f, 1.0f}; // White for Bond (RGBA)
+    vec4 h_color = {1.0f, 0.0f, 0.0f, 1.0f};    // Red for hydrogen (RGBA)
+    vec4 o_color = {0.0f, 0.0f, 1.0f, 1.0f};    // Blue for oxygen (RGBA)
 
     // Initialize the atoms with positions, colors, and radii
     atom_init(&atoms[0], "O", (vec3){0.0f, 0.0f, 0.0f}, o_color, 0.3f); // Oxygen
     atom_init(&atoms[1], "H", (vec3){1.0f, 0.0f, 0.0f}, h_color, 0.2f); // Hydrogen 1
     atom_init(&atoms[2], "H", (vec3){0.0f, 1.0f, 0.0f}, h_color, 0.2f); // Hydrogen 2
 
+    // Init Bonds
+    bond_init(&bonds[0], SINGLE_BOND, &atoms[0], &atoms[1], bond_color, 0.05f); // O-H bond 1
+    bond_init(&bonds[1], SINGLE_BOND, &atoms[0], &atoms[2], bond_color, 0.05f); // O-H bond 2
+
     Molecule *water = (Molecule *)malloc(sizeof(Molecule));
     if (!water)
     {
         printf("Error allocating memory to create Molecule\n");
     }
-    molecule_init(water, "Water", 3, atoms);
+    molecule_init(water, "Water", 3, atoms, 2, bonds);
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0);

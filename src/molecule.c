@@ -2,22 +2,37 @@
 #include <string.h>
 #include <molecule.h>
 
-void molecule_init(Molecule *mol, const char *name, int atom_count, Atom *atoms)
+void molecule_init(Molecule *mol, const char *name, int atom_count, Atom *atoms, int bond_count, Bond *bonds)
 {
     strncpy(mol->name, name, sizeof(mol->name) - 1);
     mol->name[sizeof(mol->name) - 1] = '\0';
 
     mol->atom_count = atom_count;
+    mol->bond_count = bond_count;
 
     mol->atoms = (Atom *)malloc(atom_count * sizeof(Atom));
     for (int i = 0; i < atom_count; ++i)
     {
         mol->atoms[i] = atoms[i];
     }
+
+    mol->bonds = (Bond *)malloc(bond_count * sizeof(Bond));
+    for (int i = 0; i < bond_count; ++i)
+    {
+        mol->bonds[i] = bonds[i];
+    }
 }
 
 void molecule_draw(Molecule *mol, Shader *sh, mat4 view, mat4 projection)
 {
+    for (int i = 0; i < mol->bond_count; ++i)
+    {
+        if (mol->bonds)
+        {
+            bond_draw(&mol->bonds[i], sh, view, projection);
+        }
+    }
+
     for (int i = 0; i < mol->atom_count; ++i)
     {
         if (mol->atoms)
@@ -37,5 +52,15 @@ void molecule_delete(Molecule *mol)
         }
         free(mol->atoms);
         mol->atoms = NULL;
+    }
+
+    if (mol->bonds)
+    {
+        for (int i = 0; i < mol->bond_count; ++i)
+        {
+            bond_delete(&mol->bonds[i]);
+        }
+        free(mol->bonds);
+        mol->bonds = NULL;
     }
 }

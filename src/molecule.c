@@ -2,6 +2,10 @@
 #include <string.h>
 #include <molecule.h>
 
+Molecule *generate_molecule(const char *molecule_str) {
+    // TODO
+};
+
 void molecule_init(Molecule *mol, const char *name, int atom_count, Atom *atoms, int bond_count, Bond *bonds)
 {
     strncpy(mol->name, name, sizeof(mol->name) - 1);

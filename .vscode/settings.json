@@ -7,6 +7,7 @@
     "cglm.h": "c",
     "vec3.h": "c",
     "common.h": "c",
-    "shader.h": "c"
+    "shader.h": "c",
+    "molecule.h": "c"
   }
 }

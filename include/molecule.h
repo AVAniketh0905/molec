@@ -16,6 +16,8 @@ typedef struct
     Bond *bonds;    // Array of bonds
 } Molecule;
 
+Molecule *generate_molecule(const char *molecule_str);
+
 void molecule_init(Molecule *mol, const char *name, int atom_count, Atom *atoms, int bond_count, Bond *bonds);
 void molecule_draw(Molecule *mol, Shader *sh, mat4 view, mat4 projection);
 void molecule_delete(Molecule *mol);

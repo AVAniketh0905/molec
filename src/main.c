@@ -21,24 +21,24 @@ bool firstMouse = true;
 float deltaTime = 0.0f; // Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
 
-Atom atoms[3];
-Bond bonds[2];
+// Atom atoms[3];
+// Bond bonds[2];
 
-void temporary_init_molecule()
-{
-    vec4 bond_color = {1.0f, 1.0f, 1.0f, 1.0f}; // White for Bond (RGBA)
-    vec4 h_color = {1.0f, 0.0f, 0.0f, 1.0f};    // Red for hydrogen (RGBA)
-    vec4 o_color = {0.0f, 0.0f, 1.0f, 1.0f};    // Blue for oxygen (RGBA)
+// void temporary_init_molecule()
+// {
+//     vec4 bond_color = {1.0f, 1.0f, 1.0f, 1.0f}; // White for Bond (RGBA)
+//     vec4 h_color = {1.0f, 0.0f, 0.0f, 1.0f};    // Red for hydrogen (RGBA)
+//     vec4 o_color = {0.0f, 0.0f, 1.0f, 1.0f};    // Blue for oxygen (RGBA)
 
-    // Initialize the atoms with positions, colors, and radii
-    atom_init(&atoms[0], "O", (vec3){0.0f, 0.0f, 0.0f}, o_color, 0.3f); // Oxygen
-    atom_init(&atoms[1], "H", (vec3){1.0f, 0.0f, 0.0f}, h_color, 0.2f); // Hydrogen 1
-    atom_init(&atoms[2], "H", (vec3){0.0f, 1.0f, 0.0f}, h_color, 0.2f); // Hydrogen 2
+//     // Initialize the atoms with positions, colors, and radii
+//     atom_init(&atoms[0], "O", (vec3){0.0f, 0.0f, 0.0f}, o_color, 0.3f); // Oxygen
+//     atom_init(&atoms[1], "H", (vec3){1.0f, 0.0f, 0.0f}, h_color, 0.2f); // Hydrogen 1
+//     atom_init(&atoms[2], "H", (vec3){0.0f, 1.0f, 0.0f}, h_color, 0.2f); // Hydrogen 2
 
-    // Init Bonds
-    bond_init(&bonds[0], SINGLE_BOND, &atoms[0], &atoms[1], bond_color, 0.05f); // O-H bond 1
-    bond_init(&bonds[1], SINGLE_BOND, &atoms[0], &atoms[2], bond_color, 0.05f); // O-H bond 2
-}
+//     // Init Bonds
+//     bond_init(&bonds[0], SINGLE_BOND, &atoms[0], &atoms[1], bond_color, 0.05f); // O-H bond 1
+//     bond_init(&bonds[1], SINGLE_BOND, &atoms[0], &atoms[2], bond_color, 0.05f); // O-H bond 2
+// }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
@@ -151,13 +151,16 @@ int main()
     // camera init
     camera_create_position(&camera, (vec3){0.0f, 0.0f, 10.0f});
 
-    temporary_init_molecule();
-    Molecule *water = (Molecule *)malloc(sizeof(Molecule));
-    if (!water)
-    {
-        printf("Error allocating memory to create Molecule\n");
-    }
-    molecule_init(water, "Water", 3, atoms, 2, bonds);
+    // temporary_init_molecule();
+    // Molecule *water = (Molecule *)malloc(sizeof(Molecule));
+    // if (!water)
+    // {
+    //     printf("Error allocating memory to create Molecule\n");
+    // }
+    // molecule_init(water, "Water", 3, atoms, 2, bonds);
+
+    const char *mol = "CCO";
+    Molecule *molecule = generate_molecule(mol);
 
     // cube
     Cube *light = (Cube *)malloc(sizeof(Cube));
@@ -192,7 +195,7 @@ int main()
         shader_setVec3(sh, "lightColor", light->color);
 
         // TODO: add angle axis, property to sphere/cylinder and control them in theri res draw func fro easy rotation
-        molecule_draw(water, sh, view, projection);
+        molecule_draw(molecule, sh, view, projection);
 
         glfwPollEvents();
         glfwSwapBuffers(window);
@@ -201,8 +204,8 @@ int main()
     cube_delete(light);
     free(light);
 
-    molecule_delete(water);
-    free(water);
+    molecule_delete(molecule);
+    free(molecule);
 
     shader_delete(light_sh);
     shader_delete(sh);

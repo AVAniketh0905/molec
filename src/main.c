@@ -152,12 +152,12 @@ int main()
     camera_create_position(&camera, (vec3){0.0f, 0.0f, 10.0f});
 
     // temporary_init_molecule();
-    // Molecule *water = (Molecule *)malloc(sizeof(Molecule));
-    // if (!water)
+    // Molecule *molecule = (Molecule *)malloc(sizeof(Molecule));
+    // if (!molecule)
     // {
     //     printf("Error allocating memory to create Molecule\n");
     // }
-    // molecule_init(water, "Water", 3, atoms, 2, bonds);
+    // molecule_init(molecule, "Water", 3, atoms, 2, bonds);
 
     const char *mol = "CCO";
     Molecule *molecule = generate_molecule(mol);

@@ -16,6 +16,8 @@ typedef struct
     Bond *bonds;    // Array of bonds
 } Molecule;
 
+// helper functions
+void load_molecule_from_JSON(const char *filename, Molecule *mol);
 Molecule *generate_molecule(const char *molecule_str);
 
 void molecule_init(Molecule *mol, const char *name, int atom_count, Atom *atoms, int bond_count, Bond *bonds);

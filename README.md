@@ -12,6 +12,12 @@ Heavily relies on the `OpenBabel` library for reading the `xyz` file.
 gcc -o builds/molec.exe (Get-ChildItem -Path src -Filter *.c | ForEach-Object { $_.FullName }) -I include -I include/freetype2 -L lib -lglfw3 -lopengl32 -lgdi32 -lfreetype
 ```
 
+Test
+
+```bash
+gcc -o builds/molec.exe src/test.c src/glad.c src/cJSON.c src/atom.c src/molecule.c src/sphere.c src/cylinder.c src/parse.c -I include -I include/freetype2 -L lib -lglfw3 -lopengl32 -lgdi32 -lfreetype
+```
+
 ### Linux
 
 ```bash

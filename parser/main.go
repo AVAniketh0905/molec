@@ -153,7 +153,7 @@ func read(p []byte) (*Molecule, error) {
 }
 
 func main() {
-	f, err := os.ReadFile("data/tmp.mol")
+	f, err := os.ReadFile("data/molecule.mol")
 	if err != nil {
 		log.Fatalf("failed to open file, %v", err)
 	}

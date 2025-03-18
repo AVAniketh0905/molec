@@ -1,8 +1,10 @@
 include/freetype2
 include/glad
 include/GLFW
+include/cjson
 include/KHR
 include/cglm
 lib/
+data/
 builds/
 

@@ -1,7 +1,7 @@
 #include <atom.h>
 
 // Atom
-void atom_init(Atom *atom, const char *symbol, vec3 position, vec4 color, float radius)
+void atom_init(Atom *atom, const char *symbol, vec3 position, vec3 color, float radius)
 {
     // Copy the symbol (e.g., "H", "O", "Cl")
     strncpy(atom->symbol, symbol, sizeof(atom->symbol) - 1);
@@ -9,7 +9,7 @@ void atom_init(Atom *atom, const char *symbol, vec3 position, vec4 color, float 
 
     // Set atom properties
     glm_vec3_copy(position, atom->position);
-    glm_vec4_copy(color, atom->color);
+    glm_vec3_copy(color, atom->color);
     atom->radius = radius;
 
     atom->sphere = (Sphere *)malloc(sizeof(Sphere));
@@ -37,7 +37,7 @@ void atom_delete(Atom *atom)
 };
 
 // Bond
-void bond_init(Bond *bond, BondType type, Atom *a1, Atom *a2, vec4 color, float radius)
+void bond_init(Bond *bond, BondType type, Atom *a1, Atom *a2, vec3 color, float radius)
 {
     bond->type = type;
     bond->radius = radius;

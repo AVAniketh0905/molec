@@ -159,8 +159,12 @@ int main()
     // }
     // molecule_init(molecule, "Water", 3, atoms, 2, bonds);
 
-    const char *mol = "CCO";
-    Molecule *molecule = generate_molecule(mol);
+    char *mol_str = "CCO";
+    Molecule *mol = generate_molecule(mol_str);
+
+    printf("Molecule Name: %s\n", mol->name);
+    printf("Atom count: %d\n", mol->atom_count);
+    printf("Bond count: %d\n", mol->bond_count);
 
     // cube
     Cube *light = (Cube *)malloc(sizeof(Cube));
@@ -195,7 +199,7 @@ int main()
         shader_setVec3(sh, "lightColor", light->color);
 
         // TODO: add angle axis, property to sphere/cylinder and control them in theri res draw func fro easy rotation
-        molecule_draw(molecule, sh, view, projection);
+        molecule_draw(mol, sh, view, projection);
 
         glfwPollEvents();
         glfwSwapBuffers(window);
@@ -204,8 +208,8 @@ int main()
     cube_delete(light);
     free(light);
 
-    molecule_delete(molecule);
-    free(molecule);
+    molecule_delete(mol);
+    free(mol);
 
     shader_delete(light_sh);
     shader_delete(sh);

@@ -5,9 +5,19 @@
 #include <cjson/cJSON.h>
 #include <molecule.h>
 
+// Default Atom Properties
+AtomProp Hydrogen = ATOM_PROP(1.0f, 1.0f, 1.0f, 0.2f);   // White
+AtomProp Carbon = ATOM_PROP(0.2f, 0.2f, 0.2f, 0.3f);     // Dark Gray
+AtomProp Nitrogen = ATOM_PROP(0.0f, 0.0f, 1.0f, 0.25f);  // Blue
+AtomProp Oxygen = ATOM_PROP(1.0f, 0.0f, 0.0f, 0.25f);    // Red
+AtomProp Sulfur = ATOM_PROP(1.0f, 1.0f, 0.0f, 0.3f);     // Yellow
+AtomProp Phosphorus = ATOM_PROP(1.0f, 0.5f, 0.0f, 0.3f); // Orange
+AtomProp BondT = ATOM_PROP(0.5f, 0.5f, 0.5f, 0.08f);
+
 void load_molecule_from_JSON(const char *filename, Molecule *mol)
 {
-    printf("Starting to load molecule from JSON...\n");
+    // printf("Starting to load molecule from JSON...\n");
+
     FILE *fp = fopen(filename, "rb");
     if (!fp)
     {
@@ -68,12 +78,6 @@ void load_molecule_from_JSON(const char *filename, Molecule *mol)
         return;
     }
 
-    // TODO: Set variable values for based on Element
-    vec3 defaultAtomColor = {1.0f, 1.0f, 1.0f}; // white
-    float defaultAtomRadius = 0.2f;
-    vec3 defaultBondColor = {0.5f, 0.5f, 0.5f}; // grayish
-    float defaultBondRadius = 0.08f;
-
     // Atoms Array
     cJSON *atomsArray = cJSON_GetObjectItem(json, "atoms");
     if (!cJSON_IsArray(atomsArray))
@@ -101,7 +105,37 @@ void load_molecule_from_JSON(const char *filename, Molecule *mol)
         }
         vec3 pos = {(float)xItem->valuedouble, (float)yItem->valuedouble, (float)zItem->valuedouble};
 
-        atom_init(&mol->atoms[i], elementItem->valuestring, pos, defaultAtomColor, defaultAtomRadius);
+        // Set atom properties based on element type
+        vec3 color;
+        float radius;
+        if (strcmp(elementItem->valuestring, "H") == 0)
+        {
+            glm_vec3_copy(Hydrogen.color, color);
+            radius = Hydrogen.radius;
+        }
+        else if (strcmp(elementItem->valuestring, "C") == 0)
+        {
+            glm_vec3_copy(Carbon.color, color);
+            radius = Carbon.radius;
+        }
+        else if (strcmp(elementItem->valuestring, "N") == 0)
+        {
+            glm_vec3_copy(Nitrogen.color, color);
+            radius = Nitrogen.radius;
+        }
+        else if (strcmp(elementItem->valuestring, "O") == 0)
+        {
+            glm_vec3_copy(Oxygen.color, color);
+            radius = Oxygen.radius;
+        }
+        else
+        {
+            // Default fallback
+            glm_vec3_copy(Hydrogen.color, color);
+            radius = Hydrogen.radius;
+        }
+
+        atom_init(&mol->atoms[i], elementItem->valuestring, pos, color, radius);
 
         i++;
     }
@@ -143,17 +177,29 @@ void load_molecule_from_JSON(const char *filename, Molecule *mol)
 
         // Map bond_type from JSON to your enum
         int bt = bondTypeItem->valueint;
+
+        vec3 color;
+        glm_vec3_copy(BondT.color, color);
+        float radius = BondT.radius;
         BondType type;
         if (bt == 1)
+        {
             type = SINGLE_BOND;
+        }
         else if (bt == 2)
+        {
             type = DOUBLE_BOND;
+            radius = radius * 0.75f;
+        }
         else if (bt == 3)
+        {
             type = TRIPLE_BOND;
+            radius = radius * 0.5f;
+        }
         else
             type = SINGLE_BOND; // fallback
 
-        bond_init(&mol->bonds[i], type, a1, a2, defaultBondColor, defaultBondRadius);
+        bond_init(&mol->bonds[i], type, a1, a2, color, radius);
         i++;
     }
 

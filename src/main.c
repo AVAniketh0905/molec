@@ -21,25 +21,6 @@ bool firstMouse = true;
 float deltaTime = 0.0f; // Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
 
-// Atom atoms[3];
-// Bond bonds[2];
-
-// void temporary_init_molecule()
-// {
-//     vec4 bond_color = {1.0f, 1.0f, 1.0f, 1.0f}; // White for Bond (RGBA)
-//     vec4 h_color = {1.0f, 0.0f, 0.0f, 1.0f};    // Red for hydrogen (RGBA)
-//     vec4 o_color = {0.0f, 0.0f, 1.0f, 1.0f};    // Blue for oxygen (RGBA)
-
-//     // Initialize the atoms with positions, colors, and radii
-//     atom_init(&atoms[0], "O", (vec3){0.0f, 0.0f, 0.0f}, o_color, 0.3f); // Oxygen
-//     atom_init(&atoms[1], "H", (vec3){1.0f, 0.0f, 0.0f}, h_color, 0.2f); // Hydrogen 1
-//     atom_init(&atoms[2], "H", (vec3){0.0f, 1.0f, 0.0f}, h_color, 0.2f); // Hydrogen 2
-
-//     // Init Bonds
-//     bond_init(&bonds[0], SINGLE_BOND, &atoms[0], &atoms[1], bond_color, 0.05f); // O-H bond 1
-//     bond_init(&bonds[1], SINGLE_BOND, &atoms[0], &atoms[2], bond_color, 0.05f); // O-H bond 2
-// }
-
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
@@ -151,20 +132,8 @@ int main()
     // camera init
     camera_create_position(&camera, (vec3){0.0f, 0.0f, 10.0f});
 
-    // temporary_init_molecule();
-    // Molecule *molecule = (Molecule *)malloc(sizeof(Molecule));
-    // if (!molecule)
-    // {
-    //     printf("Error allocating memory to create Molecule\n");
-    // }
-    // molecule_init(molecule, "Water", 3, atoms, 2, bonds);
-
-    char *mol_str = "CCO";
+    char *mol_str = "CC1=C2C(=CC3=C(C2=CC(=O)O1)OC(=O)C4=C(C(=C(C=C4)OC)OC)O)C(=O)O3";
     Molecule *mol = generate_molecule(mol_str);
-
-    printf("Molecule Name: %s\n", mol->name);
-    printf("Atom count: %d\n", mol->atom_count);
-    printf("Bond count: %d\n", mol->bond_count);
 
     // cube
     Cube *light = (Cube *)malloc(sizeof(Cube));
@@ -193,7 +162,7 @@ int main()
         mat4 projection;
         glm_perspective(glm_rad(camera.zoom), WIDTH / HEIGHT, 0.1f, 100.0f, projection);
 
-        cube_draw(light, light_sh, view, projection);
+        // cube_draw(light, light_sh, view, projection);
 
         shader_setVec3(sh, "lightPos", light->position);
         shader_setVec3(sh, "lightColor", light->color);

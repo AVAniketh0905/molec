@@ -7,6 +7,14 @@
 #include <sphere.h>
 #include <cylinder.h>
 
+typedef struct
+{
+    vec3 color;
+    float radius;
+} AtomProp;
+
+#define ATOM_PROP(color_r, color_g, color_b, rad) {{color_r, color_g, color_b}, rad};
+
 typedef enum
 {
     SINGLE_BOND,

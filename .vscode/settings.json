@@ -8,6 +8,7 @@
     "vec3.h": "c",
     "common.h": "c",
     "shader.h": "c",
-    "molecule.h": "c"
+    "molecule.h": "c",
+    "ini.h": "c"
   }
 }

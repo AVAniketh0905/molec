@@ -169,8 +169,6 @@ int main()
 
         // rotate mol
         molecule_setAngle(mol, 10 * glfwGetTime());
-
-        // TODO: add angle axis, property to sphere/cylinder and control them in their res draw func for easy rotation
         molecule_draw(mol, sh, view, projection);
 
         glfwPollEvents();

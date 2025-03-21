@@ -1,3 +1,5 @@
+.vscode/
+
 include/freetype2
 include/glad
 include/GLFW

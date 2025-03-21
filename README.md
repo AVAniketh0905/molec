@@ -16,13 +16,12 @@ Molec is a lightweight 3D molecule viewer written in `C` with `OpenGL`. It lever
 
 ## Molecular Visualization
 
-Molecule: Penicillin G (Benzylpenicillin)
-SMILES: CC1(C(=O)NC2=C1SC(C2CO)C(=O)O)C3=CC=CC=C3
-
+- Molecule: Penicillin G (Benzylpenicillin)
+- SMILES: CC1(C(=O)NC2=C1SC(C2CO)C(=O)O)C3=CC=CC=C3
 - Type: Antibiotic
 - Function: Treats bacterial infections
 
-<video controls src="/data/pencilin.mp4" title="Pencilin"></video>
+![Pencilin](/data/pencilin.gif)
 
 ## Installation and Setup
 

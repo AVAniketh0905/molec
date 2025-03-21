@@ -75,6 +75,7 @@ void sphere_init(Sphere *sphere, vec3 position, vec3 color, float radius)
     glm_vec3_copy(position, sphere->position);
     glm_vec3_copy(color, sphere->color);
     sphere->radius = radius;
+    sphere->angle = 0.0f;
 
     sphere_gen_stacks_sectors(sphere);
     sphere_gen_indices(sphere);
@@ -107,12 +108,18 @@ void sphere_init(Sphere *sphere, vec3 position, vec3 color, float radius)
     glEnableVertexAttribArray(2);
 };
 
+void sphere_setAngle(Sphere *sphere, float angle)
+{
+    sphere->angle = angle;
+};
+
 void sphere_draw(Sphere *sphere, Shader *sh, mat4 view, mat4 projection)
 {
     glUseProgram(sh->ID);
 
     mat4 model;
     glm_mat4_identity(model);
+    glm_rotate_y(model, glm_rad(sphere->angle), model);
     glm_translate(model, sphere->position);
 
     mat4 result;

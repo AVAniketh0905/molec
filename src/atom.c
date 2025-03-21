@@ -19,6 +19,14 @@ void atom_init(Atom *atom, const char *symbol, vec3 position, vec3 color, float 
     }
 }
 
+void atom_setAngle(Atom *atom, float angle)
+{
+    if (atom->sphere)
+    {
+        sphere_setAngle(atom->sphere, angle);
+    }
+};
+
 void atom_draw(Atom *atom, Shader *sh, mat4 view, mat4 projection)
 {
     if (atom->sphere)
@@ -57,6 +65,14 @@ void bond_init(Bond *bond, BondType type, Atom *a1, Atom *a2, vec3 color, float 
     if (bond->cy)
     {
         cylinder_init(bond->cy, position, direction, bond->color, bond->radius, height);
+    }
+};
+
+void bond_setAngle(Bond *bond, float angle)
+{
+    if (bond->cy)
+    {
+        cylinder_setAngle(bond->cy, angle);
     }
 };
 

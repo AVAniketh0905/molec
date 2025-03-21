@@ -59,6 +59,7 @@ void cylinder_init(Cylinder *cylinder, vec3 position, vec3 direction, vec3 color
     glm_vec3_copy(color, cylinder->color);
     cylinder->radius = radius;
     cylinder->height = height;
+    cylinder->angle = 0.0f;
 
     cylinder_gen_sectors(cylinder);
     cylinder_gen_indices(cylinder);
@@ -91,12 +92,18 @@ void cylinder_init(Cylinder *cylinder, vec3 position, vec3 direction, vec3 color
     glEnableVertexAttribArray(2);
 };
 
+void cylinder_setAngle(Cylinder *cylinder, float angle)
+{
+    cylinder->angle = angle;
+};
+
 void cylinder_draw(Cylinder *cylinder, Shader *sh, mat4 view, mat4 projection)
 {
     glUseProgram(sh->ID);
 
     mat4 model;
     glm_mat4_identity(model);
+    glm_rotate_y(model, glm_rad(cylinder->angle), model);
     glm_translate(model, cylinder->position);
 
     vec3 z_axis = {0.0f, 0.0f, 1.0f};

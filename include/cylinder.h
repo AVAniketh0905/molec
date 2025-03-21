@@ -19,12 +19,15 @@ typedef struct
     vec3 color;
     float radius;
     float height;
+    float angle;
 
     float vertices[2 * 9 * (CY_SECTOR_COUNT + 1)];
     unsigned int indices[6 * CY_SECTOR_COUNT];
 } Cylinder;
 
 void cylinder_init(Cylinder *cylinder, vec3 position, vec3 direction, vec3 color, float radius, float height);
+
+void cylinder_setAngle(Cylinder *cylinder, float angle);
 
 void cylinder_draw(Cylinder *cylinder, Shader *sh, mat4 view, mat4 projection);
 

@@ -72,6 +72,25 @@ void molecule_init(Molecule *mol, const char *name, int atom_count, Atom *atoms,
     }
 }
 
+void molecule_setAngle(Molecule *mol, float angle)
+{
+    for (int i = 0; i < mol->bond_count; ++i)
+    {
+        if (mol->bonds)
+        {
+            bond_setAngle(&mol->bonds[i], angle);
+        }
+    }
+
+    for (int i = 0; i < mol->atom_count; ++i)
+    {
+        if (mol->atoms)
+        {
+            atom_setAngle(&mol->atoms[i], angle);
+        }
+    }
+};
+
 void molecule_draw(Molecule *mol, Shader *sh, mat4 view, mat4 projection)
 {
     for (int i = 0; i < mol->bond_count; ++i)

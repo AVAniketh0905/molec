@@ -132,7 +132,7 @@ int main()
     // camera init
     camera_create_position(&camera, (vec3){0.0f, 0.0f, 10.0f});
 
-    char *mol_str = "CC1=C2C(=CC3=C(C2=CC(=O)O1)OC(=O)C4=C(C(=C(C=C4)OC)OC)O)C(=O)O3";
+    char *mol_str = "CCO";
     Molecule *mol = generate_molecule(mol_str);
 
     // cube
@@ -162,12 +162,15 @@ int main()
         mat4 projection;
         glm_perspective(glm_rad(camera.zoom), WIDTH / HEIGHT, 0.1f, 100.0f, projection);
 
-        // cube_draw(light, light_sh, view, projection);
+        cube_draw(light, light_sh, view, projection);
 
         shader_setVec3(sh, "lightPos", light->position);
         shader_setVec3(sh, "lightColor", light->color);
 
-        // TODO: add angle axis, property to sphere/cylinder and control them in theri res draw func fro easy rotation
+        // rotate mol
+        molecule_setAngle(mol, 10 * glfwGetTime());
+
+        // TODO: add angle axis, property to sphere/cylinder and control them in their res draw func for easy rotation
         molecule_draw(mol, sh, view, projection);
 
         glfwPollEvents();

@@ -162,7 +162,7 @@ int main()
         mat4 projection;
         glm_perspective(glm_rad(camera.zoom), WIDTH / HEIGHT, 0.1f, 100.0f, projection);
 
-        cube_draw(light, light_sh, view, projection);
+        // cube_draw(light, light_sh, view, projection);
 
         shader_setVec3(sh, "lightPos", light->position);
         shader_setVec3(sh, "lightColor", light->color);

@@ -4,6 +4,7 @@
 #include <freetype2/ft2build.h>
 #include FT_FREETYPE_H
 #include <camera.h>
+#include <ui.h>
 #include <cube.h>
 #include <sphere.h>
 #include <cylinder.h>
@@ -129,6 +130,16 @@ int main()
         printf("Error on creating light shader from file\n");
     }
 
+    // Text shader
+    Shader *text_sh = shader_create("static/text_vs.glsl", "static/text_fs.glsl");
+    if (!text_sh)
+    {
+        printf("Error on creating text shader from file\n");
+    }
+
+    // load font
+    loadFont("fonts/arial.ttf");
+
     // camera init
     camera_create_position(&camera, (vec3){0.0f, 0.0f, 10.0f});
 
@@ -181,6 +192,7 @@ int main()
     molecule_delete(mol);
     free(mol);
 
+    shader_delete(text_sh);
     shader_delete(light_sh);
     shader_delete(sh);
 

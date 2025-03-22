@@ -135,6 +135,12 @@ void shader_setFloat(const Shader *shader, const char *name, float value)
     glUniform1f(glGetUniformLocation(shader->ID, name), value);
 };
 
+void shader_setMat4(const Shader *shader, const char *name, mat4 mat)
+{
+    glUseProgram(shader->ID);
+    glUniformMatrix4fv(glGetUniformLocation(shader->ID, name), 1, GL_FALSE, (GLfloat *)mat);
+};
+
 void shader_setVec3(const Shader *shader, const char *name, vec3 v)
 {
     glUseProgram(shader->ID);

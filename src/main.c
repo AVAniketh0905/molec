@@ -15,10 +15,6 @@ const float HEIGHT = 600.0f;
 
 Camera camera;
 
-float lastX = WIDTH / 2.0f;
-float lastY = HEIGHT / 2.0f;
-bool firstMouse = true;
-
 float deltaTime = 0.0f; // Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
 
@@ -27,21 +23,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
     glViewport(0, 0, width, height);
 };
 
-void mouse_callback(GLFWwindow *window, double xpos, double ypos)
-{
-    if (firstMouse)
-    {
-        lastX = (float)xpos;
-        lastY = (float)ypos;
-        firstMouse = false;
-    }
-
-    float xoffset = (float)xpos - lastX;
-    float yoffset = (float)lastY - ypos;
-    lastX = (float)xpos;
-    lastY = (float)ypos;
-
-    camera_processMouseMovement(&camera, xoffset, yoffset, true);
+void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
 };
 
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)

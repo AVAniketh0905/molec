@@ -90,7 +90,13 @@ gcc -o builds/molec src/*.c -I include -I include/freetype2 -L /usr/lib -lglfw -
 Run the compiled executable:
 
 ```bash
-./builds/molec
+./builds/molec -"{molecule in SMILES format}"
+```
+
+example,
+
+```bash
+./builds/molec -"CCO"
 ```
 
 ## Usage

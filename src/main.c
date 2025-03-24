@@ -66,8 +66,32 @@ static void ErrLog(GLuint program, GLenum pname, int success, char *infoLog)
     }
 };
 
-int main()
+int main(int argc, char *argv[])
 {
+    if (argc != 2)
+    {
+        printf("Usage: %s -\"<molecule_string>\"\n", argv[0]);
+        return 1;
+    }
+
+    // Check if the argument starts with a dash
+    if (argv[1][0] != '-')
+    {
+        printf("Error: Argument must start with a dash ('-').\n");
+        return 1;
+    }
+
+    char *mol_str = argv[1] + 1;
+
+    // Check if the molecule string is not empty
+    if (strlen(mol_str) == 0)
+    {
+        printf("Error: Molecule string is empty.\n");
+        return 1;
+    }
+
+    printf("Molecule string: %s\n", mol_str);
+
     int success;
     char infoLog[512];
 
@@ -125,7 +149,7 @@ int main()
     // camera init
     camera_create_position(&camera, (vec3){0.0f, 0.0f, 10.0f});
 
-    char *mol_str = "CCO";
+    // gen molecule
     Molecule *mol = generate_molecule(mol_str);
 
     // cube
